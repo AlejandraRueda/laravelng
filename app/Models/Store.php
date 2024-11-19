@@ -19,6 +19,16 @@ class Store
         $this->status = $status;
     }
 
+    public function toArray()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'location' => $this->location,
+            'status' => $this->status,
+        ];
+    }
+
     public static function all()
     {
         $json = Storage::disk('local')->exists('stores.json') 
@@ -39,15 +49,18 @@ class Store
 
     public static function save($stores)
     {
-        Storage::disk('local')->put('stores.json', json_encode(
-            $stores->map(function ($store) {
-                return [
-                    'id' => $store->id,
-                    'name' => $store->name,
-                    'location' => $store->location,
-                    'status' => $store->status,
-                ];
-            })->toArray()
-        ));
+        $storesArray = $stores->map(function ($store) {
+            if (is_array($store)) {
+                return $store;
+            }
+            return [
+                'id' => $store->id,
+                'name' => $store->name,
+                'location' => $store->location,
+                'status' => $store->status,
+            ];
+        })->toArray();
+
+        Storage::disk('local')->put('stores.json', json_encode($storesArray));
     }
 }

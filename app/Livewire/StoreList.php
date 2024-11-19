@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Store;
+use Livewire\Attributes\On;
 
 class StoreList extends Component
 {
@@ -18,7 +19,21 @@ class StoreList extends Component
 
     public function refreshStores()
     {
-        $this->stores = Store::all()->toArray();  // Convertimos a array
+        $this->stores = Store::all()->map(function($store) {
+            return $store->toArray();
+        })->toArray();
+    }
+
+    #[On('store-updated')]
+    public function handleStoreUpdated()
+    {
+        $this->refreshStores();
+    }
+
+    #[On('store-saved')] 
+    public function handleStoreSaved()
+    {
+        $this->refreshStores();
     }
 
     public function render()
@@ -35,17 +50,27 @@ class StoreList extends Component
     public function toggleStatus()
     {
         if ($this->storeToToggle) {
-            $stores = collect($this->stores)->map(function ($store) {
-                if ($store['id'] === $this->storeToToggle['id']) {
-                    $store['status'] = $store['status'] === 'Activo' ? 'Inactivo' : 'Activo';
-                }
-                return $store;
-            });
-            
-            Store::save($stores);
-            $this->refreshStores();
-            $this->showDeleteModal = false;
-            session()->flash('message', 'Estado actualizado correctamente');
+            try {
+                // Guardamos el estado actual antes de cambiarlo
+                $currentStatus = $this->storeToToggle['status'];
+                
+                $stores = collect($this->stores)->map(function ($store) use ($currentStatus) {
+                    if ($store['id'] === $this->storeToToggle['id']) {
+                        $store['status'] = $currentStatus === 'Activo' ? 'Inactivo' : 'Activo';
+                    }
+                    return $store;
+                });
+                
+                Store::save($stores);
+                $this->refreshStores();
+                $this->showDeleteModal = false;
+                
+                $newStatus = $currentStatus === 'Activo' ? 'desactivada' : 'activada';
+                $this->dispatch('notify', message: "La tienda ha sido {$newStatus} exitosamente", type: 'success');
+
+            } catch (\Exception $e) {
+                $this->dispatch('notify', message: 'Error al cambiar el estado de la tienda', type: 'error');
+            }
         }
     }
 }
