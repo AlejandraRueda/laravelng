@@ -14,6 +14,8 @@ class CreateStore extends Component
     public $hasChanges = false;
     public $showConfirmClose = false;
 
+    protected $listeners = ['showCreateModal' => 'openModal'];
+
     public function mount()
     {
         $this->showModal = false;

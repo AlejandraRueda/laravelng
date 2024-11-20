@@ -1,8 +1,4 @@
 <div>
-    <button wire:click="openModal" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-        <i class="fas fa-plus mr-2"></i> Agregar
-    </button>
-
     @if($showModal)
     <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
         <div class="relative bg-white rounded-lg shadow-xl max-w-md mx-auto p-6">

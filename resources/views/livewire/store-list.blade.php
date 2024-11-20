@@ -4,6 +4,12 @@
 
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-semibold">Listado de Tiendas</h2>
+        <button 
+            wire:click="$dispatch('showCreateModal')" 
+            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center transition-colors duration-200">
+            <i class="fas fa-plus mr-2"></i>
+            Agregar
+        </button>
     </div>
 
     {{-- Mensaje de éxito --}}
@@ -47,7 +53,7 @@
                                 <button wire:click="$dispatch('showEditModal', { storeId: {{ $store['id'] }} })" 
                                     class="text-blue-600 hover:text-blue-900 mr-3 transition-colors duration-200 flex items-center">
                                     <i class="fas fa-edit"></i>
-                                <span class="ml-1">Editar</span>
+                                    <span class="ml-1">Editar</span>
                                 </button>
                                 <button wire:click="confirmToggleStatus({{ $store['id'] }})"
                                         class="text-gray-600 hover:text-gray-900 transition-colors duration-200 flex items-center mt-1">
@@ -91,5 +97,5 @@
             </div>
         </div>
     </div>
-@endif
+    @endif
 </div>
